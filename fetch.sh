@@ -13,7 +13,11 @@ fi
 
 source hhs.bash 0.2.0
 
-
+declare -A UA=(
+  [win64/fx85.0]="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+  [win64/fx106.0]="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0"
+)
+UA[0]="${UA[win64/fx106.0]}"
 
 function readp () # <prompt>
 #   read -p helper.
@@ -35,7 +39,7 @@ function init_fetch ()
 {
   cachedir=/tmp/.cache/fetch
   [ -d "$cachedir" ] || mkdir -p "$cachedir"
-  OPT_UA=( "-U" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0" )
+  OPT_UA=( "-U" "$UA" )
   OPT_USE_ASKPASS="getpw.bash"
 }
 
@@ -62,8 +66,8 @@ function optparse_fetch ()
     nparams 0
     optset FORCE "$1"
     ;;
-  --no-fx) #
-    # No pretending to FX
+  --no-ua-pretend) #
+    # No USER_AGENT	pretend
     nparams 0
     unset OPT_UA
     ;;
@@ -81,6 +85,11 @@ function optparse_fetch ()
     # Show status
     nparams 0
     optset STATUS "$1"
+    ;;
+  --ua) # <user_agent>
+    # Set USER_AGENT
+    nparams 1
+    OPT_UA=( -U "$2" )
     ;;
   -u|--user) # <user>
     # Set http user
